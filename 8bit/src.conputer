@@ -1,0 +1,53 @@
+
+; initialization
+
+inst 0         
+copy r0 r1
+inst 1 
+copy r0 r2
+copy r0 r6
+
+inst 0   ; store r1 to ram addr 0
+copy r1 ram
+inst 1   ; store r2 to ram addr 1
+copy r2 ram
+inst 2     ; start pointer at 2
+copy r0 r3
+
+copy r3 r0
+calc add        
+copy r2 r4
+copy r3 r5
+copy r3 ram
+copy r0 r1
+copy r6 r2
+calc add
+copy r4 r1
+copy r5 r2
+inst 11
+chck true
+
+
+
+; algorithm work by :
+; - r1 is equivalent to prev in normal fib code
+; - r2 is equivalent to curr in normal fib code
+; - r3 is equivalent to next in normal fib code
+; - r4 r5 is tmp
+; - r6 = 1
+; - r0 store current pointer address
+
+; loop
+; calc add
+; copy r2 to r4
+; copy r3 to r5
+; copy r3 to address(r0)
+; increase (r0) by r6(1)
+; - copy r0 to r1
+; - copy r6 to r2
+; - calc add
+; - copy r3 to r0  we got next address now
+; !pop stack
+; - copy r4 to r1
+; - copy r5 to r2
+; - goto loop

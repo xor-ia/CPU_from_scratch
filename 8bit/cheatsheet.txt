@@ -1,0 +1,35 @@
+00[data 6bit]             | store to REG0
+01[oprand 6 bit]          | calc REG1 to REG2 and store to REG3
+   000000 : XOR
+   000001 : AND
+   000010 : OR
+   000011 : NOT
+   000100 : ADD
+   000101 : SUB
+   000110 : MUL
+   000111 : DIV
+10[from 3 bit][to 3 bit]  | copy data
+   000 : REG0
+   001 : REG1
+   010 : REG2
+   011 : REG3
+   100 : REG4
+   101 : REG5
+   110 : REG6
+   111 : RAM(Address at REG0)
+11[condition 6 bit]       | jump to address in REG0 if REG3 match condition
+   000000 : ALWAYS
+   000001 : NEVER
+   000010 : =0
+   000011 : !=0
+   000100 : >0
+   000101 : <0
+   000110 : >=0
+   000111 : <=0
+
+asm:
+
+inst int6bit
+calc [xor/and/or/not/add/sub/mul/div]
+copy [r0-r6/ram]
+chck [true/false/z/nz/gtz/ltz/gtez/ltez]

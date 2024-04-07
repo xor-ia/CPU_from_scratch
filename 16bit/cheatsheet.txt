@@ -1,0 +1,80 @@
+registers : r0-r14 (15 total)
+15 = ram
+
+
+010000 is Program counter (read only) as pc
+100000 is Stack pointer   (read only) as sp
+
++ram (Read write using r3 value or sp)
+
+sti : stack pointer (start at 1111 1111 1111 1111) 
+pop =+1 push =-1
+
+inst set
+(4 bit opcode) (12 bit rest)
+
+0000 (data 12 bit)
+store data to r0
+-> inst [int up to 4095]
+
+0001 (from 6 bit) (to 6 bit)
+copy data from a to b or ram with r3 as address
+-> move [r0-r14/ram/sp/pc] [r0-r14/ram]
+
+0010 (opcode 6 bit) (to 6 bit)
+calculate r1 op r2 store to register
+-> calc [and/or/xor/not/add/sub/mul/div/ls/rs] [r0-r14]
+- 000000 : and
+- 000001 : or
+- 000010 : xor
+- 000011 : not (only using r1)
+- 000100 : add
+- 000101 : sub
+- 000110 : mul
+- 000111 : div
+- 001000 : rshift (shift r1 by r2)
+- 001001 : lshift (same)
+
+0011 (from 6bit) (cond 6bit)
+jump if the reg match condition (using r3 as address)
+-> jumpif [r0-r14] [true/false/=0/!0/>0/<0/>=0/<=0]
+- 000000 : always
+- 000001 : never
+- 000010 : =0
+- 000011 : !=0
+- 000100 : >0
+- 000101 : <0
+- 000110 : >=0
+- 000111 : <=0
+
+0100 (data reg 6bit) (any 6 bit)
+push data from dreg to address destref
+-> push [r0-r14]
+
+0101 (6 bit any) (dest ref 6bit)
+pop data from stack to destreg
+-> pop [r0-r14]
+
+1111 (any)
+halt
+-> halt
+
+STATUS
+r0-r14 read write ok
+instantiate ok
+ram read write ok
+push/pop ok
+read SP/PC ok i guess !!!! CHECK AFTER jump IMPL
+calc not ok
+jump not ok
+
+
+
+# asm
+
+-> inst [int up to 4095]
+-> move [r0-r14/ram/sp/pc] [r0-r14/ram]
+-> calc [and/or/xor/not/add/sub/mul/div/ls/rs] [r0-r14]
+-> jumpif [r0-r14] [true/false/=0/!0/>0/<0/>=0/<=0]
+-> push [r0-r14]
+-> pop [r0-r14]
