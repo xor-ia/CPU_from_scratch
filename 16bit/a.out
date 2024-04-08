@@ -1,0 +1,78 @@
+; let a = 32
+; expression begin
+inst 32
+; expression end
+push r0
+inst 76
+move r0 r3
+pop r0
+move r0 ram
+
+; let b = 1
+; expression begin
+inst 1
+; expression end
+push r0
+inst 77
+move r0 r3
+pop r0
+move r0 ram
+
+; let c = a
+; expression begin
+inst 76
+move r0 r3
+move ram r0
+; expression end
+push r0
+inst 78
+move r0 r3
+pop r0
+move r0 ram
+
+; let a = a + b * c - a
+; expression begin
+push r1
+push r2
+inst 76
+move r0 r3
+move ram r0
+move r0 r1
+push r1
+inst 77
+move r0 r3
+move ram r0
+move r0 r2
+pop r1
+calc add r1
+push r1
+inst 78
+move r0 r3
+move ram r0
+move r0 r2
+pop r1
+calc mul r1
+push r1
+inst 76
+move r0 r3
+move ram r0
+move r0 r2
+pop r1
+calc sub r1
+move r1 r0
+pop r1
+pop r2
+; expression end
+push r0
+inst 76
+move r0 r3
+pop r0
+move r0 ram
+
+; goto :skip if a > 128
+
+; goto :waypoint
+
+; set 0x0030 a
+
+halt
