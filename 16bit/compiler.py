@@ -6,6 +6,7 @@ if __name__ != "__main__":
 
 ptrTo = "PTR_TO_"
 valueOf = "VALUE_OF_"
+WP = "WAYPOINT_"
 
 
 if len(sys.argv) == 1:
@@ -24,6 +25,8 @@ def intHelp(v):
         return f"inst {v}\n"
     if v > 65535:
         disp("Overflow : 0 <=! {} <=! 65535", v, level=2)
+    instruct += f"push r1\n"
+    instruct += f"push r2\n"
     
     instruct += f"inst {v // 16}\n"
     instruct += f"move r0 r1\n"
@@ -33,6 +36,10 @@ def intHelp(v):
     instruct += f"inst {v % 16}\n"
     instruct += f"move r0 r2\n"
     instruct += f"calc or r0\n"
+
+    instruct += f"pop r1\n"
+    instruct += f"pop r2\n"
+    
     return instruct
 
 def varQuery(ptr):
@@ -62,9 +69,7 @@ def expHelp(expression):
         else: #probably a variable
             varname = expression[0]
             instr = ""
-            instr += f"{ptrTo}{varname}\n"
-            instr += f"move r0 r3\n"
-            instr += f"move ram r0\n"
+            instr += f"{valueOf}{varname}\n"
             return instr
     
     instr = ""
@@ -90,13 +95,14 @@ def expHelp(expression):
     for i in range(1, len(expression), 2):
         operator = expression[i]
         arg = expression[i+1]
-        # load arg
         instr += f"push r1\n"
         instr += f"{valueOf}{arg}\n"
-        instr += f"move r0 r2\n"
         instr += f"pop r1\n"
+        instr += f"move r0 r2\n"
         instr += f"calc {opmap[operator]} r1\n"
+
     instr += f"move r1 r0\n"
+
     instr += f"pop r1\n"
     instr += f"pop r2\n"
     
@@ -108,37 +114,41 @@ def expHelp(expression):
 parsed = list(filter(lambda x: x!="" and not x.startswith(";"), src.split("\n")))
 parsed = [" ".join(filter(lambda x: x!="", i.split(";")[0].split(" "))) for i in parsed] # removing comment and whiteSpace
 
-# determine waypoint
-waypoints = {}
-for i, v in enumerate(parsed):
-    if v.startswith(":"):
-        name = v[1:]
-        if name in waypoints.keys():
-            disp("LINE NO : {}. Waypoint overwrite detected.", level=2)
-        waypoints[name] = i+1
-
 
 varMap = {}
 varN = 0
 
-curr_exec = ""
+# determine amount of memory needed
+for n, line in enumerate(parsed):
+    if line.startswith("let"):
+        varname = line.split(" ")[1]
+        if not varname in varMap.keys():
+            varMap[varname] = varN
+            varN += 1
+            
+
+
+curr_exec = "; initializing bp\n"
+curr_exec += "move sp bp\n"
+curr_exec += "; allocating some space for variables\n"
+curr_exec += "move sp r1\n"
+curr_exec += intHelp(varN)
+curr_exec += "move r0 r2\n"
+curr_exec += "calc sub sp\n"
+curr_exec += "; bp now point to bottom of the stackframe\n\n"
 
 
 # actually compiling
 for n, line in enumerate(parsed):
     if line.startswith(":"):
+        curr_exec += f"{WP}{line[1:]}\n\n"
         continue # skip. this is not instruction just a waypoint
     tokens = line.split(" ")
     cmd = tokens[0]
     curr_exec += f"; {line}\n"
     if line.startswith("let"):
         varname = tokens[1]
-        if varname in varMap.keys():
-            ptr = varMap[varname]  
-        else:
-            ptr = varN
-            varMap[varname] = varN
-            varN += 1
+        
         curr_exec += "; expression begin\n"
         curr_exec += expHelp(tokens[3:])
         curr_exec += "; expression end\n"
@@ -147,27 +157,42 @@ for n, line in enumerate(parsed):
         curr_exec += f"move r0 r3\n"
         curr_exec += f"pop r0\n" # ; retrieve value to move to ram
         curr_exec += f"move r0 ram\n"
-    curr_exec += "\n"
-        
-#print(curr_exec)
-#print(varMap)
-offset = 8*varN+5+len(list(filter(lambda x: not x.startswith(";") and x != "",curr_exec.split("\n"))))
-#print("Offset =", offset)
+    elif line.startswith("goto"):
+        curr_exec += line 
+
+    curr_exec += "\n\n"
 
 new_exec = []
 for line in curr_exec.split("\n"):
     if line.startswith(ptrTo) and line[len(ptrTo):] in varMap.keys():
-        address = varMap[line[len(ptrTo):]] + offset
-        instruct = intHelp(address)[:-1].split("\n")
-        new_exec = new_exec + instruct
+        offset = varMap[line[len(ptrTo):]]
+        instruct = "; auto ptrTo\nmove bp r1\n"
+        instruct = instruct + intHelp(offset)
+        instruct = instruct + "move r0 r2\ncalc sub r0\n\n"
+        new_exec = new_exec + instruct.split("\n")
     elif line.startswith(valueOf) and line[len(valueOf):] in varMap.keys():
-        address = varMap[line[len(valueOf):]] + offset
-        instruct = varQuery(address)[:-1].split("\n")
-        new_exec = new_exec + instruct
+        offset = varMap[line[len(valueOf):]]
+        instruct  = "; auto valueOf\nmove bp r1\n"
+        instruct += intHelp(offset)
+        instruct += "move r0 r2\ncalc sub r3\nmove ram r0\n\n"
+        new_exec = new_exec + instruct.split("\n")
     else:
         new_exec.append(line)
 
+
 curr_exec = "\n".join(new_exec) + "halt\n"
+new_exec = []
+# handling goto states
+for line in curr_exec.split("\n"):
+    if line.startswith("goto"):
+        args = line.split(" ")
+        waypointName = args[2]
+        conditioned = len(args) > 3
+    else:
+        new_exec.append(line)
+curr_exec = "\n".join(new_exec) + "halt\n"
+
+
 outpath = "a.out" if len(sys.argv) == 2 else sys.argv[3]
 disp("Storing result to {}", outpath)
 open(outpath, "w").write(curr_exec)

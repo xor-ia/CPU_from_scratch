@@ -5,10 +5,12 @@ from utils import disp
 def regToInt(r:str):
     if r == "ram":
         return 15
-    if r == "pc":
-        return 16
     if r == "sp":
+        return 16
+    if r == "pc":
         return 32
+    if r == "bp":
+        return 14
     
     return int(r[1:])
 

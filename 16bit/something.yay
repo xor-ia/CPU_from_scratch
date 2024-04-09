@@ -1,13 +1,15 @@
-let a = 32
-let b = 1
-let c = a
+let prev = 0
+let curr = 1
+
 
 :waypoint
-let a = a + b * c - a
+let tmp = curr + prev
+let prev = curr
+let curr = prev
 
-goto :skip if a > 128
-goto :waypoint
+goto skip if curr > 128
+goto waypoint
 
 :skip
 
-set 0x0030 a
+set 0x0030 curr

@@ -1,9 +1,9 @@
 registers : r0-r14 (15 total)
 15 = ram
+r14 = bp
 
-
-010000 is Program counter (read only) as pc
-100000 is Stack pointer   (read only) as sp
+100000 is Program counter (read only) as pc
+010000 is Stack pointer   (read only) as sp
 
 +ram (Read write using r3 value or sp)
 
