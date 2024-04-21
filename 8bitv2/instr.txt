@@ -1,0 +1,116 @@
+0000 xxxx 0 : IO RAI
+0000 xxxx 1 : EI
+
+0001 xxxx 0 : IO RBI
+0001 xxxx 1 : EI
+
+
+0010 xxx1 0 : SUB
+0010 xxxx 0 : ALO
+0010 00xx 0 : RAI
+0010 01xx 0 : RBI
+0010 10xx 0 : SPI
+0010 11xx 0 : BPI
+0010 xxxx 1 : EI
+
+0011 00xx 0 : RAO
+0011 01xx 0 : RBO
+0011 10xx 0 : SPO
+0011 11xx 0 : BPO
+0011 xx00 0 : RAI
+0011 xx01 0 : RBI
+0011 xx10 0 : SPI 
+0011 xx11 0 : BPI
+0011 xxxx 1 : EI
+
+0100 xxxx 0 : MAI
+0100 00xx 0 : RAO
+0100 01xx 0 : RBO
+0100 10xx 0 : SPO
+0100 11xx 0 : BPO
+0100 xxxx 1 : RMO
+0100 xx00 1 : RAI
+0100 xx01 1 : RBI
+0100 xx10 1 : SPI
+0100 xx11 1 : BPI
+0100 xxxx 2 : EI
+
+0101 xxxx 0 : MAI
+0101 00xx 0 : RAO
+0101 01xx 0 : RBO
+0101 10xx 0 : SPO
+0101 11xx 0 : BPO
+0101 xxxx 1 : RMI
+0101 xx00 1 : RAO
+0101 xx01 1 : RBO
+0101 xx10 1 : SPO
+0101 xx11 1 : BPO
+0101 xxxx 2 : EI
+
+0110 xxxx 0 : OO
+0110 00xx 0 : RAO
+0110 01xx 0 : RBO
+0110 10xx 0 : SPO
+0110 11xx 0 : BPO
+0110 xxxx 1 : EI
+
+0111 xxxx 0 : SPO MAI
+0111 00xx 1 : RAO
+0111 01xx 1 : RBO
+0111 10xx 1 : SPO
+0111 11xx 1 : BPO
+0111 xxxx 1 : RMI SPC
+0111 xxxx 2 : EI
+
+1000 xxxx 0 : SPQ SPC
+1000 xxxx 1 : SPO MAI
+1000 00xx 2 : RAI
+1000 01xx 2 : RBI
+1000 10xx 2 : SPI
+1000 11xx 2 : BPI
+1000 xxxx 2 : RMO
+1000 xxxx 3 : EI
+
+1001 xxxx 0 : PCI
+1001 00xx 0 : RAO
+1001 01xx 0 : RBO
+1001 10xx 0 : SPO
+1001 11xx 0 : BPO
+1001 xxxx 1 : EI
+
+1010 xxxx 0 : PCI
+1010 00xx 0 : RAO
+1010 01xx 0 : RBO
+1010 10xx 0 : SPO
+1010 11xx 0 : BPO
+1010 xxxx 1 : EI
+
+1011 xxxx 0 : PCI
+1011 00xx 0 : RAO
+1011 01xx 0 : RBO
+1011 10xx 0 : SPO
+1011 11xx 0 : BPO
+1011 xxxx 1 : EI
+
+1100 xxxx 0 : PCI
+1100 00xx 0 : RAO
+1100 01xx 0 : RBO
+1100 10xx 0 : SPO
+1100 11xx 0 : BPO
+1100 xxxx 1 : EI
+
+1101 xxxx 0 : PCI
+1101 00xx 0 : RAO
+1101 01xx 0 : RBO
+1101 10xx 0 : SPO
+1101 11xx 0 : BPO
+1101 xxxx 1 : EI
+
+1110 xxxx 0 : PCI
+1110 00xx 0 : RAO
+1110 01xx 0 : RBO
+1110 10xx 0 : SPO
+1110 11xx 0 : BPO
+1110 xxxx 1 : EI
+
+1111 xxxx 0 : HLT

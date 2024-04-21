@@ -1,0 +1,132 @@
+sleep deprived edition tm
+
+RAI - a in
+RAO - a out
+
+RBI - b in
+RBO - b out
+
+MAI - mem addr in
+RMI - ram in
+RMO - ram out
+
+ALO - ALU out
+AFO - ALU flag out
+SUB - ALU subtract flag
+
+PCI - PC in
+PCO - PC out
+PCC - PC +1
+
+IO - instruction lower 4 bit out
+II - instruction register in (8 bit)
+
+SPI - SP in
+SPO - SP out
+SPC - SP count
+SPQ - SP count invert
+
+BPI - base pointer in
+BPO - base pointer in
+
+OO - output out
+
+EI - end instruction
+
+HLT - stop execution
+
+
+### Registers
+
+RA -> 00
+RB -> 01
+SP -> 10
+BP -> 11
+
+### Impl
+
+@FETCH{
+    PCO MAI
+    RMO II PCC
+}
+
+IA [4bit]
+0000 xxxx
+instantiate number to RA
+
+IB [4bit]
+0001 xxxx
+instantiate number to RB
+
+CALC [2bit Rselect] [2bit oprand]
+0010 xx xx
+do A OP B -> selected
+00 - ADD 
+01 - SUB
+
+MOVE [2bit Rselect] [2bit Rselect] (source, sink)
+0011 xx xx
+move data
+
+LOAD [2bit Rselect] [2bit Rselect] (address, sink)
+0100 xx xx
+load data from ram to sink
+
+STORE [2bit Reselect] [2bit Reselect] (address, source)
+0101 xx xx
+output data to ram
+
+OUT [2bit Reselect] [any] (source,)
+0110 xx xx
+output data to output register
+
+PUSH [2bit Reselect] [any] (source,)
+0111 xx xx
+push content of register to stack
+
+POP [2bit Reselect] [any] (source,)
+1000 xx xx
+pop content of stack to register
+
+JMP [2bit Reselect] [any] (address,) // basically `MOV RA/RB, PC`
+1001 xx xx
+set PC to content of register
+
+JMPZ [2bit Reselect] [any] (address,)
+1010 xx xx
+jump if zero
+
+example 1010 0000
+0-1 : FETCH
+(MAI & flag zero)
+
+JMPG [2bit Reselect] [any] (address,)
+1011 xx xx
+jump if A>B
+(MAI & flag gt)
+
+JMPL [2bit Reselect] [any] (address,)
+1100 xx xx
+jump if A<B
+(MAI & flag lt)
+
+JMPE [2bit Reselect] [any] (address,)
+1101 xx xx
+jump if A=B
+(MAI & flag eq)
+
+JMPO [2bit Reselect] [any] (address,)
+1110 xx xx
+jump if A + B overflowed
+(MAI & flag ov)
+
+
+HALT [any]
+1111 xxxx
+halt cpu
+
+
+just use 24 bit address eeprom :D
+
+
+
